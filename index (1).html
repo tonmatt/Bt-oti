@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BitLend - Bitcoin DeFi App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0e0e0e;
+      color: #fff;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #f39c12;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background-color: #f39c12;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    .btn:hover {
+      background-color: #d35400;
+    }
+
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      margin-top: 10px;
+      width: 200px;
+    }
+
+    .section {
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>BitLend</h1>
+  <p>Bitcoin DeFi Lending App</p>
+
+  <div class="section">
+    <button class="btn" onclick="connectWallet()">Connect Wallet</button>
+    <p id="wallet-status">Wallet not connected</p>
+  </div>
+
+  <div class="section">
+    <h3>Deposit BTC</h3>
+    <input type="number" id="deposit-amount" placeholder="Amount in BTC"/>
+    <button class="btn" onclick="depositBTC()">Deposit</button>
+    <p id="btc-balance">Balance: 0 BTC</p>
+  </div>
+
+  <div class="section">
+    <h3>Borrow USDT</h3>
+    <p>You can borrow up to 60% of your BTC value</p>
+    <input type="number" id="borrow-amount" placeholder="Amount in USDT"/>
+    <button class="btn" onclick="borrowUSDT()">Borrow</button>
+    <p id="usdt-balance">Loan Balance: 0 USDT</p>
+  </div>
+
+  <div class="section">
+    <h3>Repay Loan</h3>
+    <input type="number" id="repay-amount" placeholder="Repay USDT"/>
+    <button class="btn" onclick="repayLoan()">Repay</button>
+  </div>
+
+  <script>
+    let isConnected = false;
+    let btcBalance = 0;
+    let usdtLoan = 0;
+
+    function connectWallet() {
+      isConnected = true;
+      document.getElementById("wallet-status").textContent = "Wallet connected ✅";
+      alert("Wallet connected successfully!");
+    }
+
+    function depositBTC() {
+      if (!isConnected) return alert("Connect your wallet first!");
+      const amount = parseFloat(document.getElementById("deposit-amount").value);
+      if (isNaN(amount) || amount <= 0) return alert("Enter a valid BTC amount.");
+      btcBalance += amount;
+      document.getElementById("btc-balance").textContent = `Balance: ${btcBalance.toFixed(4)} BTC`;
+      alert(`Deposited ${amount} BTC successfully.`);
+    }
+
+    function borrowUSDT() {
+      if (!isConnected) return alert("Connect your wallet first!");
+      const maxBorrow = btcBalance * 0.6 * 30000; // Assume 1 BTC = $30,000
+      const amount = parseFloat(document.getElementById("borrow-amount").value);
+      if (isNaN(amount) || amount <= 0) return alert("Enter a valid USDT amount.");
+      if (amount > maxBorrow - usdtLoan) return alert("Borrow amount exceeds your limit.");
+      usdtLoan += amount;
+      document.getElementById("usdt-balance").textContent = `Loan Balance: ${usdtLoan.toFixed(2)} USDT`;
+      alert(`Borrowed ${amount} USDT.`);
+    }
+
+    function repayLoan() {
+      if (!isConnected) return alert("Connect your wallet first!");
+      const amount = parseFloat(document.getElementById("repay-amount").value);
+      if (isNaN(amount) || amount <= 0) return alert("Enter a valid USDT amount.");
+      if (amount > usdtLoan) return alert("You're repaying more than your loan.");
+      usdtLoan -= amount;
+      document.getElementById("usdt-balance").textContent = `Loan Balance: ${usdtLoan.toFixed(2)} USDT`;
+      alert(`Repaid ${amount} USDT.`);
+    }
+  </script>
+
+</body>
+</html>
